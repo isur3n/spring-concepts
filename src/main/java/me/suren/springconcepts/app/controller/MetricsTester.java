@@ -1,6 +1,7 @@
 package me.suren.springconcepts.app.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import me.suren.springconcepts.app.annotation.TimeIt;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ public class MetricsTester {
 
     private static final Random RANDOM_NUMBER_GENERATOR = new Random();
 
+    @TimeIt
     @GetMapping({"", "/"})
     public String getRandomNumber() {
         Long randomNumber = RANDOM_NUMBER_GENERATOR.nextLong();
