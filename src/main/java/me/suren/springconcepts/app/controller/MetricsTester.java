@@ -3,9 +3,7 @@ package me.suren.springconcepts.app.controller;
 import lombok.extern.slf4j.Slf4j;
 import me.suren.springconcepts.app.annotation.TimeIt;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Random;
 
@@ -16,11 +14,11 @@ public class MetricsTester {
 
     private static final Random RANDOM_NUMBER_GENERATOR = new Random();
 
-    @TimeIt
     @GetMapping({"", "/"})
+    @TimeIt("/app/spring-concepts/metrics-tester")
     public String getRandomNumber() {
         Long randomNumber = RANDOM_NUMBER_GENERATOR.nextLong();
-        log.info("Random number generated - {}", randomNumber);
+        log.info("Random number generated for id - {}", randomNumber);
         return StringUtils.join("Random number generated - ", randomNumber);
     }
 }
