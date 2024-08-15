@@ -31,11 +31,6 @@ public class TimeItInterceptor {
         methods.addAll(reflections.getMethodsAnnotatedWith(TimeIt.class));
         for(Method method : methods) {
             TimeIt timeIt = method.getDeclaredAnnotation(TimeIt.class);
-            if(StringUtils.isBlank(timeIt.value())) {
-                String message = StringUtils.join("Method ", method.toString(),
-                        " has TimeIt annotation with invalid value.");
-                throw new InvalidTimeItValue(message);
-            }
             timeItMethods.put(method, timeIt);
         }
     }
@@ -51,7 +46,10 @@ public class TimeItInterceptor {
         Method method = signature.getMethod();
 
         TimeIt annotation = timeItMethods.get(method);
-        log.info("Time taken for {} - {} ms.", annotation.value(), executionTime);
+        String timeItMessage = StringUtils.isNotBlank(annotation.value())
+                ? annotation.value()
+                : StringUtils.join(method.getDeclaringClass().getSimpleName(), "::", method.getName());
+        log.info("Time taken for {} - {} ms.", timeItMessage, executionTime);
 
         return response;
     }

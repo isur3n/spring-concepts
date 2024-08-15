@@ -15,7 +15,7 @@ public class MetricsTester {
     private static final Random RANDOM_NUMBER_GENERATOR = new Random();
 
     @GetMapping({"", "/"})
-    @TimeIt("/app/spring-concepts/metrics-tester")
+    @TimeIt
     public String getRandomNumber() {
         Long randomNumber = RANDOM_NUMBER_GENERATOR.nextLong();
         log.info("Random number generated for id - {}", randomNumber);
