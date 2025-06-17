@@ -3,7 +3,6 @@ package me.suren.springconcepts.app.dto.validator;
 import lombok.extern.slf4j.Slf4j;
 import me.suren.springconcepts.app.dto.User;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -20,7 +19,7 @@ public class UserValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         User validateMe = (User) target;
-        log.debug("Validation started for - {}", target);
+        log.info("Validation started for - {}", target);
 
         if(StringUtils.isBlank(validateMe.getName()) ||
                 validateMe.getName().length() < 2) {

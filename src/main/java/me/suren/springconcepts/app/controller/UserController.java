@@ -3,7 +3,9 @@ package me.suren.springconcepts.app.controller;
 import lombok.extern.slf4j.Slf4j;
 import me.suren.springconcepts.app.annotation.TimeIt;
 import me.suren.springconcepts.app.dto.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
