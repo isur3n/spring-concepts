@@ -1,6 +1,7 @@
 package me.suren.springconcepts.app.controller.advice;
 
 import me.suren.springconcepts.app.dto.validator.UserValidator;
+import me.suren.springconcepts.app.exception.CustomAppException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -27,8 +28,11 @@ public class GlobalRestControllerAdvice {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Set<Map>> handleValidationExceptions(
+    public ResponseEntity<Map<String, Object>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
+
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("message", ex.getMessage());
 
         Set<Map> errors = new HashSet<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
@@ -41,7 +45,21 @@ public class GlobalRestControllerAdvice {
 
             errors.add(fieldErrorRecord);
         });
+        errorResponse.put("errors", errors);
 
-        return ResponseEntity.badRequest().body(errors);
+        return ResponseEntity.badRequest()
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(CustomAppException.class)
+    public ResponseEntity<Map<String, Object>> handleCustomAppExceptions(
+            CustomAppException ex) {
+
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("message", ex.getMessage());
+
+        return ResponseEntity
+                .status(ex.getCode())
+                .body(errorResponse);
     }
 }
