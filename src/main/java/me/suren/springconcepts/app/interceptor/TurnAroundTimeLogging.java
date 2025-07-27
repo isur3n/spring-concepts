@@ -33,7 +33,8 @@ public class TurnAroundTimeLogging implements HandlerInterceptor {
         if(StringUtils.equalsIgnoreCase(request.getHeader("x-request-turn-around-time"), "true")) {
             log.info("Turn around time is requested.");
             contextWrapper.getContext()
-                    .set(Map.of("start", LocalDateTime.now()));
+                    .get()
+                    .put("start", LocalDateTime.now());
         }
         return true;
     }
@@ -42,16 +43,6 @@ public class TurnAroundTimeLogging implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
            ModelAndView modelAndView) {
 
-        if(contextWrapper.getContext().get() == null) {
-            log.error("Context has not been set up.");
-        }
-
-        log.info("Can we add response headers? - {}", !response.isCommitted());
-
-        Duration duration = Duration.between((Temporal) contextWrapper.getContext().get().get("start"),
-                LocalDateTime.now());
-        response.setIntHeader("x-turn-around-time", duration.getNano());
-        log.info("Turn around time is - {}", duration.getNano());
     }
 
     @Override

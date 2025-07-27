@@ -11,12 +11,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.temporal.Temporal;
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -29,6 +28,8 @@ public class TurnAroundTimeFilter extends OncePerRequestFilter {
     public TurnAroundTimeFilter(ContextWrapper contextWrapper) {
         this.contextWrapper = contextWrapper;
     }
+
+    private ThreadLocal<Map<String, Object>> ctx = ThreadLocal.withInitial(HashMap::new);
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -51,13 +52,15 @@ public class TurnAroundTimeFilter extends OncePerRequestFilter {
 
     public void beforeRequest(HttpServletRequest request, HttpServletResponse response) {
         log.info("Turn around time is requested.");
-        contextWrapper.getContext()
-                .set(Map.of("start", LocalDateTime.now()));
+        /*contextWrapper.getContext()
+                .get()
+                .put("start", LocalDateTime.now());*/
+        ctx.get().put("start", LocalDateTime.now());
     }
 
     public void afterRequest(HttpServletResponse response) throws ServletException {
 
-        if(contextWrapper.getContext().get() == null) {
+        if(ctx.get() == null) {
             log.error("Context has not been set up.");
             throw new CustomAppException("Context has not been set up.");
         }
@@ -65,12 +68,10 @@ public class TurnAroundTimeFilter extends OncePerRequestFilter {
         log.info("Can we add response headers? - {}", !response.isCommitted());
 
         LocalDateTime end = LocalDateTime.now();
-        contextWrapper.getContext()
-                .set(Map.of("end", end));
+        ctx.get().put("end", end);
 
-        Duration duration = Duration.between((Temporal) contextWrapper.getContext().get().get("start"), end);
-        contextWrapper.getContext()
-                .set(Map.of("duration", duration));
+        Duration duration = Duration.between((LocalDateTime) ctx.get().get("start"), end);
+        ctx.get().put("duration", duration);
 
         response.setIntHeader("x-turn-around-time", duration.getNano());
         log.info("Turn around time is - {}", duration.getNano());

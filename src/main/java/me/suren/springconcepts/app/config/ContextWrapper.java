@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -11,5 +12,5 @@ import java.util.Map;
 public class ContextWrapper {
 
     @Getter
-    private final ThreadLocal<Map<String, Object>> context = new ThreadLocal<>();
+    private ThreadLocal<Map<String, Object>> context = ThreadLocal.withInitial(HashMap::new);
 }
